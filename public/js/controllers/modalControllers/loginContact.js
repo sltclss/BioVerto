@@ -1,7 +1,8 @@
  if (typeof  modalControllers === 'undefined')
  modalControllers = {};
  
- modalControllers.contactUs = function($scope, $modalInstance) {
+ modalControllers.loginContact = function($scope, $modalInstance) {
+ 				$scope.modal = $modalInstance;
                 $scope.ok = function() {
                      $modalInstance.close();
                 }

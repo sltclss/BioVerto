@@ -50,7 +50,7 @@ var UserSchema = new Schema({
 	},
 	username: {
 		type: String,
-		unique: 'testing error message',
+		unique: 'Username is already taken',
 		required: 'Please fill in a username',
 		trim: true
 	},
@@ -88,7 +88,15 @@ var UserSchema = new Schema({
 	},
   	resetPasswordExpires: {
   		type: Date
-  	}
+  	},
+  	workSpaceviews: [{
+  		type: Schema.ObjectId,
+  		ref: 'View'
+  	}],
+  	myViews: [{
+  		type: Schema.ObjectId,
+  		ref: 'View'
+  	}]
 });
 
 /**

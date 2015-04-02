@@ -1,0 +1,295 @@
+<section data-ng-controller="mainController">
+  <div class="navbar navbar-fixed-top navbar-inverse" style="margin-bottom: 0px !important; padding-bottom: 0px" role="navigation" data-ng-controller="AuthenticationController">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button> <a class="navbar-brand" href="#">BioVerto</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Home</a>
+                        </li>
+                        <li>
+                                    <a href="/auth/signout">Signout</a>
+                                </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <span data-ng-bind="authentication.user.displayName"></span> <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="/#!/dashboard">My Dashboard</a>
+                                </li>
+                                <li data-ng-show="authentication.user.provider === 'local'">
+                                    <a href="/#!/settings/password">Change Password</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="/auth/signout">Signout</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+  </div>
+	<div id="wrapper" ng-class="{'active' : isActive}" ng-init="isActive = true; open = 1">
+	<style scoped>
+      .row{
+          margin-left:0px;
+          margin-right:0px;
+      }
+
+      #wrapper {
+          padding-left: 25px;
+          transition: all .4s ease 0s;
+          height: auto;
+      }
+
+      #sidebar-wrapper {
+          margin-top: 6px;
+          margin-left: -110px;
+          left: 70px;
+          width: auto;
+          background: #ecf0f1;
+          z-index: 10000;
+          transition: all .4s ease 0s;
+      }
+
+      .sidebar-nav {
+          display: block;
+          float: left;
+          width: 92px;
+          list-style: none;
+          padding: 0;
+      }
+      #page-content-wrapper {
+          padding-left: 0;
+          margin-left: 0;
+          width: 100%;
+          height: auto;
+      }
+      #wrapper.active {
+          padding-left: 110px;
+      }
+      #wrapper.active #sidebar-wrapper {
+          left: 110px;
+      }
+
+      #page-content-wrapper {
+        width: 100%;
+      }
+
+      #sidebar_menu li a, .sidebar-nav li a {
+          color: #999;
+          display: block;
+          float: left;
+          text-decoration: none;
+          width: 110px;
+          background: #252525;
+          border-top: 1px solid #373737;
+          border-bottom: 1px solid #1A1A1A;
+          -webkit-transition: background .5s;
+          -moz-transition: background .5s;
+          -o-transition: background .5s;
+          -ms-transition: background .5s;
+          transition: background .5s;
+      }
+      .sidebar_name {
+          padding-top: 25px;
+          color: #fff;
+          opacity: .7;
+      }
+
+      .sidebar-nav li {
+        line-height: 40px;
+        text-indent: 20px;
+      }
+
+      .sidebar-nav li a {
+        color: #999999;
+        display: block;
+        text-decoration: none;
+      }
+
+      .sidebar-nav li a:hover {
+        color: #fff;
+        background: rgba(255,255,255,0.2);
+        text-decoration: none;
+      }
+
+      .sidebar-nav li a:active,
+      .sidebar-nav li a:focus {
+        text-decoration: none;
+      }
+
+      .sidebar-nav > .sidebar-brand {
+        height: 65px;
+        line-height: 60px;
+        font-size: 18px;
+      }
+
+      .sidebar-nav > .sidebar-brand a {
+        color: #999999;
+      }
+
+      .sidebar-nav > .sidebar-brand a:hover {
+        color: #fff;
+        background: none;
+      }
+
+      #main_icon
+      {
+          float:right;
+         padding-right: 65px;
+         padding-top:20px;
+      }
+      .sub_icon
+      {
+          float:right;
+         padding-right: 65px;
+         padding-top:10px;
+      }
+      .content-header {
+        height: 65px;
+        line-height: 65px;
+      }
+
+      .content-header h1 {
+        margin: 0;
+        margin-left: 20px;
+        line-height: 65px;
+        display: inline-block;
+      }
+
+      @media (max-width:767px) {
+          #wrapper {
+          padding-left: 25px;
+          transition: all .4s ease 0s;
+        }
+      }
+      #sidebar-wrapper {
+          left: 70px;
+      }
+      #wrapper.active {
+          padding-left: 110px;
+      }
+      #wrapper.active #sidebar-wrapper {
+          left: 92px;
+          width: 92px;
+          transition: all .4s ease 0s;
+      }
+
+      .collapse.width {
+          height: auto;
+          width:0;
+          -webkit-transition: width 0.35s ease;
+          -moz-transition: width 0.35s ease;
+          -o-transition: width 0.35s ease;
+          transition: width 0.35s ease;
+      }
+      .popover {max-width:400px;}
+  </style>
+      <!-- Sidebar -->
+
+            <!-- Sidebar -->
+      <div id="sidebar-wrapper" ng-mouseover="isActive = true">
+
+        <ul class="sidebar-nav" id="sidebar">     
+              <div class="list-group">
+                <a id="menu-toggle" ng-click="isActive = !isActive" class="list-group-item text-center">
+                  <h4 class="glyphicon glyphicon-align-justify"></h4><br/>
+                </a>
+                <a href="" class="list-group-item text-center" ng-click="open = 1">
+                 <h4 class="glyphicon glyphicon-folder-open"></h4><br/>Workspace
+                </a>
+                <a href="" class="list-group-item text-center" data-placement="right" data-toggle="popover"   data-container="body" type="button" data-html="true" ng-click="uploadType.name=''; open=1" >
+                  <h4 class="glyphicon glyphicon-th"></h4><br/>Graphs
+                </a>
+                <a href="" class="list-group-item text-center" ng-click="open = 2">
+                  <h4 class="glyphicon glyphicon-eye-open"></h4><br/>My Views
+                </a>
+                <a href="" class="list-group-item text-center" ng-click="open = 3">
+                  <h4 class="glyphicon glyphicon-share"></h4><br/>Shared
+                </a>
+                
+              </div>
+        </ul>
+        <div id="popover-content" class="hide">
+          <div class="form-inline">
+            <label for="uploadType">
+              Upload graph:
+            </label>
+            <select class="form-control" data-ng-model="uploadType.name" ng-change="uploadTypeChange()">
+              <option value="fromDB">Graphs in Database</option>
+              <option value="importCSV">Import CSV</option>
+              <option value="blastFasta">Blast Fasta</option>
+              <option value="microArray">Microarray Data</option>
+            </select>  
+
+       <!--   <div ng-show="uploadType.name=='importCSV'" data-ng-include="'./partials/csvFileOpen.html'">-->
+           
+         </div>
+        </div>   
+      </div>
+
+       
+      <!-- Page content -->
+      <div id="page-content-wrapper">
+        <!-- Workspace content BEGIN -->
+        <div id="workspace" ng-show="open==1">
+            <div class="collapse center-block">
+              <div>
+                  <div ng-repeat="(index, view) in views" class=" btn btn-sm-nopad" >
+                      <h4  href="#" ng-click="changeView(view.indx)"><span ng-class="{'label label-primary': (active === view.indx), 'label label-default': (active !== view.indx)} " >{{view.title}} - {{view.layout}}<span href="#" ng-click="removeView(view.indx)" class="glyphicon glyphicon-remove-circle" style="padding-left: 5;" ></span></span></h4>
+                  </div>
+              </div>
+            </div>
+            <div class="text-center">
+            <div class="col-lg-12 text-center m-t-md " style="-webkit-animation: 0.2s;" ng-show="views.length<=0">
+                <h2>
+                  There are currently no views in your workspace.
+                </h2>
+
+                <p>
+                  Use "Graphs" to upload data graphs to your Dashboard and start new View creations and/or add Views from "My Views" or "Shared"
+                </p>
+            </div>
+            <div  ng-repeat=" view in views |sortViews:active" style="position:absolute">
+                <panel activeindex=active layout = view.layout index =view.indx heading=view.title state=view.state graph-name=view.graphName rootfn= "panelFn(fntype,args)" href="#"></panel>
+            </div>
+        </div>
+        </div>
+
+        <!-- Workspace content END -->
+
+        <div ng-show="open==2"><div data-ng-include="'./pages/dashboard-my-views.html'"></div></div>
+        <div ng-show="open==3"><div data-ng-include="'./pages/dashboard-shared-views.html'"></div></div>
+
+          
+     <!--     <div ng-show="uploadType=='fromDB'">
+            <input type="file" name='files[]' ng-model="fileName" onchange="angular.element(this).scope().handleFileSelect(this)"/>
+            <br>
+            <button class="btn btn-primary" ng-disabled="!(fileName&&uploadButtonEnable)" ng-click="fileUpload()">Upload</button>
+          </div>
+            
+          <div ng-show="state=='previewState'">
+            <div class="gridStyle" ng-grid="gridOptions"></div>
+            <button class="btn btn-primary pull-right" ng-disabled="!(target&&source)" ng-click="state='graphName';graphName=file.name.split('.')[0]">Next</button>
+          </div>
+          <div ng-show="state=='graphName'">
+            <div> <h5>Graph Name</h5>
+              <input type="checkbox" ng-model="defaultName" ng-init="defaultName=true"> Default : Filename<br>
+              <input  type="text" ng-disabled="defaultName" ng-model="graphName">
+            </div>
+          </div>-->
+      </div>
+    </div>
+</section>
+
+

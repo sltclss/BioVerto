@@ -1,0 +1,14 @@
+        <div class="collapse center-block">
+            test {{views.length}}
+            <div ng-show="views.length>0">
+                <div ng-repeat="(index, view) in views" class=" btn btn-sm-nopad" >
+                    <h4  href="#" ng-click="changeView(view.indx)"><span ng-class="{'label label-primary': (active === view.indx), 'label label-default': (active !== view.indx)} " >{{view.title}} - {{view.layout}}<span href="#" ng-click="removeView(view.indx)" class="glyphicon glyphicon-remove-circle" style="padding-left: 5;" ></span></span></h4>
+                </div>
+            </div>
+            <div ng-show="views.length<=0">
+                There are currently no views in your workspace.  Use "Graphs" to upload data graphs to your Dashboard and start new View creations and/or add Views from "My Views" or "Shared".
+            </div>
+        </div>
+        <div  ng-repeat=" view in views |sortViews:active" style="position:absolute">
+            <panel activeindex=active layout = view.layout index =view.indx heading=view.title state=view.state graph-name=view.graphName rootfn= "panelFn(fntype,args)" href="#"></panel>
+        </div>

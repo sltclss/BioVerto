@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: 'mongodb://localhost/bioverto-dev',
+	db: 'mongodb://localhost/bioverto2',
 	app: {
 		title: 'Bioverto - Development Environment'
 	},

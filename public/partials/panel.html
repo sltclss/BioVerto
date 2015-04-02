@@ -9,29 +9,36 @@
                             <div class="text-primary"> {{heading}}</div>
                         </div>
                         <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
-                            <a href="#" ng-click="removeView()" class="col-xs-2 pull-right glyphicon glyphicon-remove" ></a>
+                            <a href="" ng-click="removeView()" class="col-xs-2 pull-right glyphicon glyphicon-remove" ></a>
                         </div>
                         
                         <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
-                            <a href="#" class="col-xs-2 pull-right dropdown-toggle glyphicon glyphicon-cog" ></a>
+                            <a href="" class="col-xs-2 pull-right dropdown-toggle glyphicon glyphicon-cog" ></a>
                             <ul class="dropdown-menu">                                   
                                 <li>
-                                    <a href="#" ng-click="cloneView()">Clone View</a>
+                                    <a href="" ng-click="cloneView()">Clone View</a>
                                 </li>
                                 <li>
-                                    <a href="#" ng-click="stopAnimationView()">Stop Animation</a>
+                                    <a href="" ng-click="getViewFromDB()">Load View</a>
+                                </li>
+                                <li>
+                                    <a href="" ng-click="stopAnimationView()">Stop Animation</a>
                                 </li>
                             </ul>
                         </div>
                         
                        <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
-                           <a href="#" ng-click="exportAsImage()" class="col-xs-2 pull-right dropdown-toggle glyphicon glyphicon-picture" ></a>
+                           <a href="" ng-click="exportAsImage()" class="col-xs-2 pull-right dropdown-toggle glyphicon glyphicon-picture" ></a>
                             <ul id="dropdown{{index}}" class="dropdown-menu">                                   
                                
                                 <form>
                                  <h6>Export as Image</h6>
                                 <h6>Filename:</h6> 
-                                <input type="text" ng-model="filename">
+                                <input type="text" ng-model=scope.saveView = function()
+                    {
+                         scope.rootfn({fntype:"saveView",args:scope.getState()});
+                        
+                    }"filename">
                               
                                 <a href="{{imageData}}" ng-hide="!filename" style="color: #FFFFFF;background: #428bca;border-radius: 2;padding: 5;" download="{{filename}}.png" >Save</a>                               
                                 
@@ -39,8 +46,14 @@
                             </ul>
                         </div>
                         <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
-                           <a href="#" ng-click="stopAnimationView()" class="col-xs-2 pull-right  glyphicon glyphicon-stop" ></a>                
+                            <a href="" ng-click="stopAnimationView()" class="col-xs-2 pull-right  glyphicon glyphicon-stop" ></a>                
                         </div>
+                         <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
+                            <a href="" ng-click="shareView()" class="col-xs-2 pull-right  glyphicon glyphicon-share" ></a>   
+                        </div>
+                        <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
+                            <a href="" ng-click="saveView()" class="col-xs-2 pull-right  glyphicon glyphicon-floppy-disk"></a>           
+                        </div>     
                     </div>
                 </div>  
             </div>
@@ -53,7 +66,7 @@
 
     </div>
     <div ng-show="index == activeindex" class="sidebar-offcanvas" role="navigation">
-        <div class="well sidebar-nav" >
+        <div class="well" >
 
             <div class="well">
                 <a>Algorithms</a>

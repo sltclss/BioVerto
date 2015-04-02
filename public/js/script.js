@@ -44,16 +44,46 @@ var BioVertoPath = "http://datapath.cise.ufl.edu:1080/BioVerto-data";
 var asanaPHPPath = "http://pranaowalekar.in/kartik/a.php";      
 
 /* Start the app */
-var app= angular.module("MyApp", ['ngSanitize','ui.bootstrap','ngGrid','colorpicker.module','ui.unique'])
+var app= angular.module("MyApp", ['ngSanitize','ui.bootstrap','ngGrid','colorpicker.module','ui.unique', 'ui.router'])
 app.config( [
-    '$compileProvider',
-    function( $compileProvider )
+    '$compileProvider','$stateProvider', '$urlRouterProvider',
+    function( $compileProvider, $stateProvider, $urlRouterProvider)
     {   
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|file):|data:image\//);
-       
+            $urlRouterProvider.otherwise('/');
+
+            // Admin state routing
+            $stateProvider
+            .state('home',{
+                url: '/',
+                
+                    templateUrl: 'pages/landing.html'
+              
+            })
+            .state('dashboard',{
+                url: '/dashboard',
+                
+                    templateUrl: 'pages/dashboard.html'
+               
+              })
+            
     }
 ]);
-
+/*
+app.run(function ($rootScope, $state, $location, Authentication) {
+    var auth = Authentication
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
+      console.log(auth.user);
+      if(toState.name==='dashboard' && !auth.user)
+      {
+        //if not logged in keep on main page
+        event.preventDefault();
+        $state.go('home');
+      }
+      
+    });
+});
+*/
 $(document).ready( function() {
     $('#myCarousel').carousel({
     	interval:   6000

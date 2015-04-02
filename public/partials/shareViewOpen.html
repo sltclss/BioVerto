@@ -1,0 +1,37 @@
+    <div class="modal-body" data-ng-init="getUserList(); getSharingList()">
+        <h3>Share with Users</h3>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th class="col-sm-3">View Title</th>
+                    <td>{{view.title}}</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-3">Graph Name</th>
+                    <td>{{view.graphName}}</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-3">Sharing with</th>
+                    <td>
+                        <div ng-show="sharingList.length==0">None</div>
+                        <div class="btn #btn-sm-nopad" style="padding: 0px"ng-repeat="user in sharingList" >
+                            <h4  href="" style=" margin: 5px 0px"><span class="label label-primary" style="">{{user}}<span href="" class="glyphicon glyphicon-remove-circle" style="padding-left: 5" ng-click="removeShareUser($index)"></span></span></h4>
+                        </div>
+                       
+                    </td>
+               
+                </tr>
+            </tbody>
+        </table>
+        <div class="col-sm-5 col-sm-offset-2">
+                <input type="text" ng-model="selected.username" typeahead="username for username in userList | filter:$viewValue | limitTo:8" class="form-control">
+
+        </div>
+        <button class="btn btn-info" ng-click="addUserToShare()"><span class="glyphicon glyphicon-plus"></span> User</button>   
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="share()">Update</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+        

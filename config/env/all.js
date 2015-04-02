@@ -6,7 +6,7 @@ module.exports = {
 		description: 'Research portal for Bioinformatics',
 		keywords: 'Bioverto,Bioinformatics'
 	},
-	port: process.env.PORT || 3000,
+	port: process.env.PORT || 3300,
 	templateEngine: 'swig',
 	sessionSecret: 'MEAN',
 	sessionCollection: 'sessions',

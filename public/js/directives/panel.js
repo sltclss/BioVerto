@@ -59,6 +59,16 @@ angular.module("MyApp")
                          scope.rootfn({fntype:"saveView",args:scope.getState()});
                         
                     }
+                    scope.shareView = function()
+                    {
+                         scope.rootfn({fntype:"shareView"});
+                        
+                    }
+                    scope.getViewFromDB = function()
+                    {
+                         scope.rootfn({fntype:"getViewFromDB",args:scope.getState()});
+                        
+                    }
 
                      scope.exportAsImage = function()
                     {

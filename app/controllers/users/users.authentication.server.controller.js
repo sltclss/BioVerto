@@ -204,3 +204,27 @@ exports.removeOAuthProvider = function(req, res, next) {
 		});
 	}
 };
+
+//ADDITIONAL FUNCTIONS
+
+/**
+ * Return list of users
+ */
+exports.getUserList = function(req, res, next) {
+	
+	User.find({},{_id:0, 'username':1}).exec(function(err, foundUsers)
+	{
+		if (err) 
+		{
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else 
+		{
+			res.jsonp(foundUsers);
+		}
+	});
+};
+
+
+

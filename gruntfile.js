@@ -86,7 +86,7 @@ module.exports = function(grunt) {
 			dev: {
 				script: 'server.js',
 				options: {
-					nodeArgs: ['--debug'],
+					nodeArgs: ['--debug=6001'],
 					ext: 'js,html',
 					watch: watchFiles.serverViews.concat(watchFiles.serverJS),
                     callback: function (nodemon) {
@@ -103,7 +103,7 @@ module.exports = function(grunt) {
 				options: {
 					'web-port': 1338,
 					'web-host': '0.0.0.0',
-					'debug-port': 5858,
+					'debug-port': 5859,
 					'save-live-edit': true,
 					'no-preload': true,
 					'stack-trace-limit': 50,
@@ -139,7 +139,7 @@ module.exports = function(grunt) {
 		},
 		karma: {
 			unit: {
-				configFile: 'karma.conf.js'
+				configFile: 'karm.conf.js'
 			}
 		}
 	});
