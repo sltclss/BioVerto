@@ -50,7 +50,12 @@ exports.get = function(req, res) {
  * Get list of users that are being shared with
  */
 exports.getShareUsers = function(req, res) {
-
+	if(!req.user)
+	{
+		return res.send({
+			message: 'You must be logged in.'
+		});
+	}
 	View.findOne({createdBy: req.user._id, title: req.body.view}).sort('-created').exec(function(err, foundView){
 		if (err) 
 		{
@@ -69,7 +74,12 @@ exports.getShareUsers = function(req, res) {
  * Get list of views that are being shared with a particular user
  */
 exports.getSharedWithUser = function(req, res) {
-
+	if(!req.user)
+	{
+		return res.send({
+			message: 'You must be logged in.'
+		});
+	}
 	View.find({ shareUsers: req.user.username}).sort('-created').exec(function(err, foundViews){
 		if (err) 
 		{
@@ -159,6 +169,12 @@ exports.getlist = function(req, res) {
 	});
 };
 exports.getListByUser = function(req, res) {
+	if(!req.user)
+	{
+		return res.send({
+			message: 'You must be logged in.'
+		});
+	}
 	View.find({createdBy: req.user._id}).sort('-created').exec(function(err, views) {
 		if (err) {
 			return res.status(400).send({

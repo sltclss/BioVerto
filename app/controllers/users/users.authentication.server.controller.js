@@ -39,6 +39,7 @@ exports.signup = function(req, res) {
 				if (err) {
 					res.status(400).send(err);
 				} else {
+					res.cookie('user', user);
 					res.jsonp(user);
 				}
 			});
@@ -53,6 +54,7 @@ exports.signin = function(req, res, next) {
 	passport.authenticate('local', function(err, user, info) {
 		if (err || !user) {
 			res.status(400).send(info);
+
 		} else {
 			// Remove sensitive data before login
 			user.password = undefined;
@@ -74,6 +76,8 @@ exports.signin = function(req, res, next) {
  */
 exports.signout = function(req, res) {
 	req.logout();
+	res.clearCookie('user');
+
 	res.redirect('/');
 };
 

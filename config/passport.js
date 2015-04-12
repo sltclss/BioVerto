@@ -17,9 +17,6 @@ module.exports = function() {
 		User.findOne({
 			_id: id
 		}, '-salt -password', function(err, user) {
-			console.log('Deserialize');
-			console.log(err);
-			console.log(user);
 			done(err, user);
 		});
 	});

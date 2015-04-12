@@ -1,5 +1,5 @@
 angular.module("MyApp")
-        .controller('mainController', function($scope, $modal, modalCtrlProvider, $http, $compile, Authentication, $window) {
+        .controller('mainController', function($scope, $modal, modalCtrlProvider, $http, $compile, Authentication) {
             $scope.views =[];
             $scope.active = 0;
             $scope.newViewIndex = 0;
@@ -12,9 +12,7 @@ angular.module("MyApp")
             $scope.username = null;
 
             $scope.authentication = Authentication;
-            console.log('Main');
-            console.log($scope.authentication);
-
+           
             $scope.randomSort = function(view) {
               return Math.random();
             };
@@ -277,6 +275,7 @@ angular.module("MyApp")
                 var modalInstance = $modal.open({
                     templateUrl: './partials/loginContactModal.html',
                     controller: modalCtrlProvider.getCtrl("loginContact"),
+                    windowClass: 'login-modal',
                     resolve: {
                         tabIndex: 1
                     },
@@ -381,12 +380,9 @@ angular.module("MyApp")
                 });
             };
         /*
-        * Dashboard Javascript
+        * Nav and Right-Panel Javascript
         */
-        $scope.testThis = function()
-        {
-            console.log('hello this is called');
-        };
+
             $("[data-toggle=popover]").popover({
                 html: true,
                 'container': 'body', 
@@ -406,6 +402,7 @@ angular.module("MyApp")
                     }
                 });
             });
+
             $scope.uploadType={};
            $scope.uploadTypeChange = function()
            {
@@ -428,9 +425,36 @@ angular.module("MyApp")
 
                 }
            };
+            $.asm = {};
+            $.asm.panels = 1;
 
+            function rightpanel(panels) {
+                $.asm.panels = panels;
+                if (panels === 1) {
+                  $('#rightpanel').animate({
+                        right: -330,
+                  });
+                } else if (panels === 2) {
+                 
+                    $('#rightpanel').animate({
+                        right: 0,
+                    });
+                //            $('#rightpanel').height($(window).height() - 50);   
+                }
+            };
 
-           
-        });
+            $('#toggleRightpanel').click(function() {
+              if ($.asm.panels === 1) {
+                $('#toggleRightpanel i').addClass('glyphicon-option-vertical');
+                $('#toggleRightpanel i').removeClass('glyphicon-option-vertical');
+                return rightpanel(2);
+              } else {
+                $('#toggleRightpanel i').removeClass('glyphicon-option-vertical');
+                $('#toggleRightpanel i').addClass('glyphicon-option-vertical');
+                return rightpanel(1);
+              }
+            });
+
+});
 
 

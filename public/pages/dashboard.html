@@ -264,6 +264,128 @@
                 <panel activeindex=active layout = view.layout index =view.indx heading=view.title state=view.state graph-name=view.graphName rootfn= "panelFn(fntype,args)" href="#"></panel>
             </div>
         </div>
+
+
+
+<div id="rightpanel" >
+<!--Rightpanel content-->
+  <div id="rightpanel-content">
+    <ul class="nav nav-pills" ng-init="activityTab=0" style="padding-bottom: 10px">
+      <li ng-class="{ active: activityTab==0}"><a href="" ng-click="activityTab=0">Graph Info</a></li>
+      <li ng-class="{ active: activityTab==1}"><a href="" ng-click="activityTab=1">Notes</a></li>
+      <li ng-class="{ active: activityTab==2}"><a href=""ng-click="activityTab=2">Comments</a></li>
+    </ul>
+
+    <div ng-show="activityTab==0">
+    </div>
+    <div ng-show="activityTab==1">
+      <div id="note-subject-header" class="col-sm-12">
+        <div class="col-sm-3">
+          <h5>Topic:</h5>
+        </div>
+        <div class="col-sm-9">
+          <select class="form-control input-sm">
+                  <option value="">All</option>
+                  <option value="past">Nodes</option>
+                  <option value="future">Virus</option>
+                  <option value="future">Networks</option>
+          </select>
+        </div>
+      </div>
+      <div class="rightpanel-note-main">
+        <div class="note">
+          <span class="glyphicon glyphicon-pushpin" style="color: #555"></span>
+          <span style="color: #555; padding: 0 5px; font-weight: bold">First Note</span>
+          <span  style="color: #777" ><small class="label label-default">Nodes</small></span>
+          <span  style="color: #777"><small><span class=" glyphicon glyphicon-trash btn btn-sm pull-right"></span></small></span>
+          <div class="note-content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut laore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </div>
+        </div>
+        <div class="note">
+          <span class="glyphicon glyphicon-pushpin" style="color: #555"></span>
+          <span style="color: #555; padding: 0 5px; font-weight: bold">First Note</span>
+          <span  style="color: #777" ><small class="label label-default">Nodes</small></span>
+          <span  style="color: #777"><small><span class=" glyphicon glyphicon-trash btn btn-sm pull-right"></span></small></span>
+          <div class="note-content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut laore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </div>
+        </div>
+        <div class="note">
+          <span class="glyphicon glyphicon-pushpin" style="color: #555"></span>
+          <span style="color: #555; padding: 0 5px; font-weight: bold">First Note</span>
+          <span  style="color: #777" ><small class="label label-default">Nodes</small></span>
+          <span  style="color: #777"><small><span class=" glyphicon glyphicon-trash btn btn-sm pull-right"></span></small></span>
+          <div class="note-content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut laore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </div>
+        </div>
+        <div class="note">
+          <span class="glyphicon glyphicon-pushpin" style="color: #555"></span>
+          <span style="color: #555; padding: 0 5px; font-weight: bold">First Note</span>
+          <span  style="color: #777" ><small class="label label-default">Nodes</small></span>
+          <span  style="color: #777"><small><span class=" glyphicon glyphicon-trash btn btn-sm pull-right"></span></small></span>
+          <div class="note-content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut laore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </div>
+        </div>
+      </div>
+      <div id="new-note">
+        <h5 style="color: #428bca">New Note:</h5>
+        <div>
+          <div class="col-sm-6" style="padding: 0 5px 0 0; margin-bottom: 10px">
+            <input type="text" ng-model="selected.username" typeahead="username for username in userList | filter:$viewValue | limitTo:8" class="form-control input-sm" placeholder="Title">
+          </div>
+          <div class="col-sm-6" style="padding: 0 0 0 5px; margin-bottom: 10px">
+            <input type="text" ng-model="selected.username" typeahead="username for username in userList | filter:$viewValue | limitTo:8" class="form-control input-sm" placeholder="Topic">
+          </div>
+        </div>
+
+        <div>
+        <textarea class="form-control" rows="2" style="width: 100%; resize: none; margin: 10px 0"></textarea></div>
+          <button type="button" class="btn btn-default btn-sm pull-right">Submit</button>
+      </div>
+    </div>
+
+
+    <div ng-show="activityTab==2">
+      <div class="rightpanel-comment-main">
+        <div class="comment">
+          <span class="glyphicon glyphicon-comment" style="color: #555"></span>
+          <span style="color: #555; padding-left: 5px; font-weight: bold">sltclss</span>
+          <span  style="color: #777" ng-init="myDate= '2015-07-17T09:24:17Z'">&bullet; <small>  {{myDate | timeago}}<span class=" glyphicon glyphicon-trash btn btn-sm pull-right"></span></small></span>
+          <div class="comment-content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </div>
+        </div>
+        <div class="comment">
+          <span class="glyphicon glyphicon-comment" style="color: #555"></span>
+          <div class="comment-content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </div>
+        </div>
+        <div class="comment">
+          <span class="glyphicon glyphicon-comment" style="color: #555"></span>
+          <div class="comment-content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </div>
+        </div>
+      </div>
+      <div id="new-comment">
+        <h5 style="color: #428bca">New Comment:</h5>
+        <textarea class="form-control" rows="2" style="width: 100%; resize: none; margin: 10px 0"></textarea>
+        <button type="button" class="btn btn-default btn-sm pull-right">Submit</button>
+      </div>
+    </div>
+  </div>
+  <div id="toggleRightpanel" class="toggles">
+   <span style="font-size: 24px; margin: 9px 12px">&lsaquo;&lsaquo;</span>
+   <div>
+</div>
+
+
+
+
         </div>
 
         <!-- Workspace content END -->
