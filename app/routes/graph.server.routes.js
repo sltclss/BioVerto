@@ -14,5 +14,6 @@ module.exports = function(app) {
         .get(graph.getDb);
     app.route("/deleteDbs")
         .get(graph.deleteDbs);
-
+    app.route("/userGraphs")
+        .post(graph.getUserGraphs);
 }

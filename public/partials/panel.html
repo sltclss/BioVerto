@@ -6,10 +6,10 @@
                 <div class="panel-title ">
                     <div class="btn-group" style="width:100%;">
                         <div class="pull-left">
-                            <div class="text-primary"> {{heading}}</div>
+                            <div class="text-primary"> {{heading}} - {{graphName}}</div>
                         </div>
                         <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
-                            <a href="" ng-click="removeView()" class="col-xs-2 pull-right glyphicon glyphicon-remove" ></a>
+                            <a href="" ng-click="removeView(activeindex)" class="col-xs-2 pull-right glyphicon glyphicon-remove" ></a>
                         </div>
                         
                         <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
@@ -17,9 +17,6 @@
                             <ul class="dropdown-menu">                                   
                                 <li>
                                     <a href="" ng-click="cloneView()">Clone View</a>
-                                </li>
-                                <li>
-                                    <a href="" ng-click="getViewFromDB()">Load View</a>
                                 </li>
                                 <li>
                                     <a href="" ng-click="stopAnimationView()">Stop Animation</a>
@@ -48,12 +45,12 @@
                         <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
                             <a href="" ng-click="stopAnimationView()" class="col-xs-2 pull-right  glyphicon glyphicon-stop" ></a>                
                         </div>
-                         <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
+                         <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;" data-ng-if="sharable">
                             <a href="" ng-click="shareView()" class="col-xs-2 pull-right  glyphicon glyphicon-share" ></a>   
                         </div>
-                        <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;">
+                        <div class="btn-sm btn-sm-nopad pull-right" style="width: 25px;" data-ng-if="savable">
                             <a href="" ng-click="saveView()" class="col-xs-2 pull-right  glyphicon glyphicon-floppy-disk"></a>           
-                        </div>     
+                        </div>    
                     </div>
                 </div>  
             </div>
@@ -84,12 +81,9 @@
                  <div style='padding-bottom: 10px; padding-top: 10px;'><a class='pull-left'>Edge Filters</a></div>
                  <br>
                  <filterselect acessorfns="acessorFns" type="'Edge'" filterupdate ="view.edgeFilterFunction(_)" filtervalue = "filters.edge"  ></filterselect>
-            
              </tab>
             </tabset>
-            
-
+            <button ng-click="testView()">test </button>
         </div>
     </div>
-
 </div>

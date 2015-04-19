@@ -17,12 +17,12 @@ var ViewSchema = new Schema({
     createdBy:{
         type: Schema.ObjectId,
         ref: 'User',
-        required: 'You must be logged in to create/save a view',
+        required: 'You must be logged in to create/save a view.',
     },
     graphName: {
         type: String,
         default: '',
-        required: 'The name of the attached graph is required',
+        required: 'The name of the attached graph is required.',
         trim: true
     },
     graphLayout: {
@@ -33,17 +33,17 @@ var ViewSchema = new Schema({
     title: {
         type: String,
         default: '',
-        required: 'A Title is required',
+        required: 'A Title is required.',
         trim: true,
     },
     summary: {
         type: String,
-        required: 'A view summary is required',
+        required: 'A view summary is required.',
         trim: true,
     },
     state: {
-        type: Object //,
-        //required: 'Need view state'
+        type: Object,
+        required: 'Need view state'
     },
     comments: [
         {
@@ -56,6 +56,8 @@ var ViewSchema = new Schema({
         {
             created: Date,
             user: String,
+            topic: String,
+            title: String,
             text: String
         }
     ],

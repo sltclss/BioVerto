@@ -51,9 +51,26 @@ var organisms = ["Arabidopsis_thaliana",
     "Sus_scrofa",
     "Xenopus_laevis"]
 
-    /**
- * Create a article
- */
+exports.getUserGraphs = function(req, res) {
+    if(!req.body.userGraphs)
+    {
+        return res.send({
+            message: 'Missing data; request incomplete'
+        });
+    }     
+    Graph.find({title: {$in: req.body.userGraphs}}).sort('-created').exec(function(err, graphs){
+        if (err) 
+        {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else 
+        {
+            res.jsonp(graphs);
+        }
+    }); 
+};
+
 exports.listGraph = function(req, res) {
     Graph.find().sort('-created').exec(function(err, articles) {
         if (err) {

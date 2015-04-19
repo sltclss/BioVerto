@@ -5,6 +5,17 @@
 body {
     padding-top: 70px;
 }
+#app-content{
+   overflow-y: auto;
+  /* Firefox */
+  height: -moz-calc(100% - 35px);
+  /* WebKit */
+  height: -webkit-calc(100% - 35px);
+  /* Opera */
+  height: -o-calc(100% - 35px);
+  /* Standard */
+  height: calc(100% - 35px);
+}
 footer {
     padding-left: 15px;
     padding-right: 15px;
@@ -60,6 +71,19 @@ footer {
   height: -o-calc(100% - 255px);
   /* Standard */
   height: calc(100% - 255px);
+  width: 100%;
+}
+.rightpanel-note-main2{
+   overflow-y: auto;
+  /* Firefox */
+  height: -moz-calc(100% - 100px);
+  /* WebKit */
+  height: -webkit-calc(100% - 100px);
+  /* Opera */
+  height: -o-calc(100% - 100px);
+  /* Standard */
+  height: calc(100% - 100px);
+  width: 100%;
 }
 #toggleRightpanel {
     float: left;

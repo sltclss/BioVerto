@@ -9,7 +9,7 @@
     $scope.userList = [];
     $scope.getSharingList = function()
     {
-        $http.post('/sharingList', {view: $scope.view.title}).success(function(response) {
+        $http.post('/sharingList', {view: $scope.view._id}).success(function(response) {
             $scope.sharingList = response;
         }).error(function(response) {
             $scope.error = response.message;
@@ -22,6 +22,8 @@
             response.forEach(function (user) {
               results.push(user.username);
             });
+            var index = results.indexOf($scope.authentication.user.username);
+            results.splice(index, 1);
             $scope.userList = results;
             console.log($scope.userList);
         }).error(function(response) {
@@ -59,16 +61,15 @@
             receivers: $scope.sharingList
         };
         $http.post('/shareView', send).success(function(response) {
-            console.log(response);
-            $scope.ok();
+            $scope.ok({isChanged: true, updatedList: response});
         }).error(function(response) {
             $scope.error = response.message;
         });
     };
 
     $scope.modal = $modalInstance;
-    $scope.ok = function() {
-         $modalInstance.close();
+    $scope.ok = function(response) {
+         $modalInstance.close(response);
     }
     $scope.cancel = function() {
         $modalInstance.dismiss('cancel');

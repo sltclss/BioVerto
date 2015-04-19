@@ -69,7 +69,7 @@ app.config( [
             
     }
 ]);
-/*
+
 app.run(function ($rootScope, $state, $location, Authentication) {
     var auth = Authentication
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState) {
@@ -83,7 +83,7 @@ app.run(function ($rootScope, $state, $location, Authentication) {
       
     });
 });
-*/
+
 $(document).ready( function() {
     $('#myCarousel').carousel({
     	interval:   6000

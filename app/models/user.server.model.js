@@ -89,7 +89,7 @@ var UserSchema = new Schema({
   	resetPasswordExpires: {
   		type: Date
   	},
-  	workSpaceviews: [{
+  	workspaceViews: [{
   		type: Schema.ObjectId,
   		ref: 'View'
   	}],

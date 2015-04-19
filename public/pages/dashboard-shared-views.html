@@ -9,15 +9,15 @@
     </p>
 </div>
 	<form class="form-inline">
-	  <div class="form-group">
-	    <label for="viewSearch">View Name</label>
-	    <input type="text" class="form-control" id="viewSearch" placeholder="Enter view name...">
+	  <div class="form-group col-sm-6 col-sm-offset-3">
+	    <label for="viewSearch">Search Views</label>
+	    <input class="form-control" id="viewSearch" placeholder="Enter view name..." data-ng-model="viewSearch">
 	  </div>
-	  <button type="submit" class="btn btn-default">Search</button>
+
 	</form>
 </div>
 <div class="col-sm-12" >
-    <div class="panel panel-default" style="width: 300px; height: 375px; margin: 20px 10px; float: left;" data-ng-repeat="view in sharedViews" >
+    <div class="panel panel-default" style="width: 300px; height: 375px; margin: 20px 10px; float: left;" data-ng-repeat="view in sharedViews | filter:viewSearch" >
         <div class="panel-heading" style="padding: 2px 10px">
             <h4>{{view.title}}</h4>
         </div>
@@ -31,9 +31,13 @@
             </div>
             <div class="col-sm-12" style="padding: 10px 0px">
                 <div class="col-sm-4" style="padding: 0px">
-                    <a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Workspace</a></div>
+                    <button class="btn btn-default btn-sm" ng-click="addToWorkspace('sharedView', $index)" ng-disabled="view.inWorkspace">
+                        <span class="glyphicon glyphicon-plus" ng-if="!view.inWorkspace"></span> 
+                        <span class="glyphicon glyphicon-ok" ng-if="view.inWorkspace"></span>&nbsp;Workspace
+                        </button>
+                    </div>
                 <div class="col-sm-8; text-right" style="padding-right: 0px;">
-                    <h5><small>{{view.createdOn}}</small></h5>
+                    <h5><small>{{view.createdOn | date:'medium'}}</small></h5>
                     
                 </div>
             </div>

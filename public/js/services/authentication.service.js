@@ -8,8 +8,6 @@ angular.module('MyApp').factory('Authentication', [ '$cookieStore',
 		_this._data = {
 			user: $cookieStore.get('user')
 		};
-		console.log('Authentication');
-		console.log($cookieStore.get('user'));
 		return _this._data;
 	}
 ]);

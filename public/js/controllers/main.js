@@ -1,5 +1,5 @@
 angular.module("MyApp")
-        .controller('mainController', function($scope, $modal, modalCtrlProvider, $http, $compile, Authentication) {
+        .controller('mainController', function($scope, $rootScope ,$modal, modalCtrlProvider, $http, $compile, Authentication, $timeout) {
             $scope.views =[];
             $scope.active = 0;
             $scope.newViewIndex = 0;
@@ -17,16 +17,22 @@ angular.module("MyApp")
               return Math.random();
             };
 
-            $scope.addView = function(layout, graphName, state)
-            {
+            $scope.addView = function(layout, graphName, state, title, id, comments, notes, createdBy)
+            {   
                 if ($scope.newViewIndex !== 0 && typeof graphName === 'undefined')
                 {
                     graphName = $scope.views[$scope.active].graphName;
                 }
-                
+                var nTitle = "New View " + $scope.newViewIndex;
+
+                if(title)
+                {
+                    nTitle = title;
+                }
+
                 $scope.active = $scope.newViewIndex;
-                $scope.views[$scope.newViewIndex] = {layout: layout, title: "New View " + $scope.newViewIndex, graphName: graphName, indx: $scope.newViewIndex, state: state};
-                
+                $scope.views[$scope.newViewIndex] = {layout: layout, title: nTitle, graphName: graphName, indx: $scope.newViewIndex, state: state, _id: id, comments: comments, notes: notes, createdBy: createdBy};
+
                 $scope.newViewIndex++;
             };
 
@@ -79,20 +85,22 @@ angular.module("MyApp")
             $scope.removeView = function(index)
             {
                 // First delete this view
-                delete $scope.views[index];
+                $scope.removeWorkspaceStatus(index);
+                //delete $scope.views[index];
                 //remove undefined values
-                $scope.views = $scope.views.filter(function(n){ return n != undefined });
-
+                $scope.views.splice(index,1);
+                $scope.newViewIndex--;
                 // Select another view to be the active view
                 // Simply pick the first view available
                 // This is ugly but effective. There is no API to do this
-                
-                 for (var i in $scope.views) {
-                    $scope.changeView(i);
-                    return; // we got the first one
+                if($scope.views.length>0)
+                {
+                    for (var i in $scope.views) {
+                        $scope.changeView(i);
+                        return; // we got the first one
+                    }
+                   console.log($scope.views.length);
                 }
-               
-
             };
             $scope.panelFn = function(fntype, args)
             {
@@ -101,7 +109,8 @@ angular.module("MyApp")
             $scope.changeView = function(indx)
             {
                 $scope.active = parseInt(indx);
-                console.log($scope.active);
+                //update note topics
+                $scope.getNotes();
 
             };
             $scope.cloneView = function(state)
@@ -300,85 +309,373 @@ angular.module("MyApp")
                             return $scope.views[$scope.active];
                         }}
                 });
-                 modalInstance.result.then(function() {
-
+                 modalInstance.result.then(function(response) {
+                    if(response.isChanged)
+                    {
+                        $scope.myViews[index].shareUsers=response.updatedList;
+                    }
                 }, function() {
                     return;
                 });
             };
-
             $scope.saveView = function(state)
-            {
-                var modalInstance = $modal.open({
-                    templateUrl: './partials/saveViewOpen.html',
-                    controller: modalCtrlProvider.getCtrl("saveView"),
-                    resolve: {
-                        view: function() {
-                            return $scope.views[$scope.active];
-                        }}
-                });
-                 modalInstance.result.then(function() {
+            {  
+                if($scope.views[$scope.active]._id!=undefined)
+                {
 
-                }, function() {
-                    return;
-                });
-            /*
-                var graphJson = CircularJSON.stringify(g5.graphs[state.graphName].getState());
+                    $http.post('/updateView', {viewId: $scope.views[$scope.active]._id, state: state}).success(function(response) {
+                    }).error(function(response) {
+                        $scope.error = response.message;
+                    });
+            }
+                else
+                {
+                    var nView = $scope.views[$scope.active];
+                    nView.state = state;
+                    var modalInstance = $modal.open({
+                        templateUrl: './partials/saveViewOpen.html',
+                        controller: modalCtrlProvider.getCtrl("saveViewCtrl"),
+                        resolve: {
+                            view: function() {
+                                return nView;
+                            }}
+                    });
+                     modalInstance.result.then(function(view) {
+                        view.inWorkspace=true;
+                        view.layout = $scope.views[$scope.active].layout;
+                        view.indx = $scope.views[$scope.active].indx;
+                        $scope.views[$scope.active].title = view.title;
+                        $scope.views[$scope.active] = view;
+                        $scope.myViews.push(view);
+
+                        $http.post('/addtoWorkspace', {viewId: view._id}).success(function(response2) {
+                            $scope.workspaceViewIds = response2;
+                        }).error(function(response2) {
+                            $scope.error = response2.message;
+                        });
+
+                    }, function() {
+                        return;
+                    });
+             }
+            /*    
+            var graphJson = CircularJSON.stringify(g5.graphs[state.graphName].getState());
                 var viewJson = CircularJSON.stringify(state);
-                console.log(graphJson);
-                console.log(viewJson);
                 var send =
                 {
-                   // graphJson: CircularJSON.stringify(g5.graphs[state.graphName].getState()),
-                   // viewJson: CircularJSON.stringify(state)
+                   graphJson: CircularJSON.stringify(g5.graphs[state.graphName].getState()),
+                   viewJson: CircularJSON.stringify(state),
                    viewState: state
                 }
-                $http.post('/createView', send).success(function(response) {
-                    console.log(response);
-                }).error(function(response) {
-                    $scope.error = response.message;
-                });
             */
             };
-            
-             $scope.getViewFromDB = function(state)
+            $scope.addToWorkspace = function(type, index)
             {
-                var send = 
+                var selectedView = {};
+                if(type=='myView')
                 {
-                    id : '54f6351a5279572d37c1f70f'
-                };
-                $http.post('/getView', send).success(function(response) {
-                    console.log(response.state.layout);
-                    console.log(response.state.graphName);
-                    console.log(response.state);
+                    selectedView = $scope.myViews[index];
+                }
+                else if(type=='sharedView')
+                {
+                    selectedView = $scope.sharedViews[index];
+                }
+                    var state = selectedView.state;
+                    console.log(selectedView);
+                    $scope.addView(state.layout, state.graphName, state, selectedView.title, selectedView._id, selectedView.comments, selectedView.notes, selectedView.createdBy);
 
-                    //$scope.cloneView(response.state);
+                    selectedView.inWorkspace=true;
+                    $http.post('/addtoWorkspace', {viewId: selectedView._id}).success(function(response) {
+                        $scope.workspaceViewIds = response;
+                    }).error(function(response) {
+                        $scope.error = response.message;
+                    });
+            };
+            $scope.removeWorkspaceStatus = function(index)
+            {
+                for(var i = 0; i< $scope.myViews.length; i++)
+                {
+                    if($scope.myViews[i]._id==$scope.views[index]._id)
+                    {
+                        $scope.myViews[i].inWorkspace = false;
+                        $http.post('/removeFromWorkspace', {viewId: $scope.myViews[i]._id}).success(function(response) {
+                             $scope.workspaceViewIds = response;
+                        }).error(function(response) {
+                            $scope.error = response.message;
+                        });
+                    }
+                }
+                console.log('THROUGHSHARED');
+                for(var i = 0; i< $scope.sharedViews.length; i++)
+                {
+                    console.log($scope.sharedViews[i]._id);
+                    console.log($scope.views[index]._id);
+                    console.log($scope.sharedViews[i]._id==$scope.views[index]._id);
+                    if($scope.sharedViews[i]._id==$scope.views[index]._id)
+                    {                        
+                        $scope.sharedViews[i].inWorkspace = false;
+                        $http.post('/removeFromWorkspace', {viewId: $scope.sharedViews[i]._id}).success(function(response) {
+                            console.log('removed from database:');
+                            console.log(response);
+                        }).error(function(response) {
+                            $scope.error = response.message;
+                        });
+                    }
+                }
+            };
+            $scope.workspaceViewIds = {};
+            $scope.workspaceLoading = true;
+            $scope.setupWorkspace = function()
+            {
+
+                $http.get('/getWorkspace').success(function(response) {
+                    
+                    $scope.workspaceViewIds = response;
+                    $scope.workspaceLoading = false;
+                    $scope.workspaceViewIds.forEach(function(viewId){
+                        for(var i = 0; i< $scope.myViews.length; i++)
+                        {
+                            if($scope.myViews[i]._id == viewId )
+                            {
+                               var state = $scope.myViews[i].state;
+                                $scope.addView(state.layout, state.graphName, state, $scope.myViews[i].title, $scope.myViews[i]._id, $scope.myViews[i].comments, $scope.myViews[i].notes, $scope.myViews[i].createdBy);
+
+                                $scope.myViews[i].inWorkspace=true;
+                                return;
+                            }
+                        }
+                        for(var i = 0; i< $scope.sharedViews.length; i++)
+                        {
+                            if($scope.sharedViews[i]._id == viewId )
+                            {                        
+                                var state = $scope.sharedViews[i].state;
+                                $scope.addView(state.layout, state.graphName, state, $scope.sharedViews[i].title,  $scope.sharedViews[i]._id, $scope.sharedViews[i].comments, $scope.sharedViews[i].notes, $scope.sharedViews[i].createdBy);
+
+                                $scope.sharedViews[i].inWorkspace=true;
+                                return;
+                            }
+                        }        
+                    });
                 }).error(function(response) {
                     $scope.error = response.message;
                 });
-                
-            };
+
+            }
             $scope.myViews = [];
+            $scope.userGraphNames = [];
+            $scope.userGraphs = [];
             $scope.getMyViews = function()
             {
                 $http.get('/listByUser').success(function(response) {
-                    console.log(response);
                     $scope.myViews=response;
                 }).error(function(response) {
                     $scope.error = response.message;
                 });
             };
+            $scope.initViewGraphs = function()
+            {   
+                $http.get('/listByUser').success(function(response) {
+                    $scope.myViews=response;
+                    for(var i = 0; i<$scope.myViews.length; i++)
+                    {                       
+                        if($scope.userGraphNames.indexOf($scope.myViews[i].graphName)<0)
+                            {
+                                $scope.userGraphNames.push($scope.myViews[i].graphName);
+                            }
+                    }
+                    $http.get('/shareWithMe').success(function(response1) {
+                        $scope.sharedViews=response1;
+                        console.log('Sharedwithme');
+                        for(var i = 0; i<$scope.sharedViews.length; i++)
+                        {                       
+                            if($scope.userGraphNames.indexOf($scope.sharedViews[i].graphName)<0)
+                            {
+                                $scope.userGraphNames.push($scope.sharedViews[i].graphName);
+                            }
+                        }
+                        if($scope.userGraphNames.length>0)
+                        {                             console.log($scope.userGraphNames);
+
+                            $scope.retrieveGraphs($scope.userGraphNames);
+                        }
+                    }).error(function(response) {
+                        $scope.error = response.message;
+                    });
+                }).error(function(response) {
+                    $scope.error = response.message;
+                });
+
+                    //after initialize setup workspace; time out for asynchronous calls
+                     $timeout($scope.setupWorkspace, 1000);
+
+            };
+            $scope.retrieveGraphs = function(graphNames)
+            {   
+                var send = {userGraphs: graphNames};
+                $http.post('/userGraphs', send).success(function(response) {
+                    $scope.userGraphs = response;
+                    for(var i = 0; i<$scope.userGraphs.length; i++)
+                    {
+                        if(g5.getGraph($scope.userGraphs[i].title)==undefined)
+                        {
+                            $scope.loadWorkspaceGraph($scope.userGraphs[i]);
+                        }
+                    }
+
+                }).error(function(response) {
+                    $scope.error = response.message;
+                });  
+            }
+            $scope.loadWorkspaceGraph = function(graph)
+            {   $http.get("/getDb",{responseType: "arraybuffer",params:{dbFile:graph.dbFile,title:graph.title}}).success(function(result) {
+                    var blob = new Uint8Array(result);
+                    var   db = new GraphSqliteDb(new SQL.Database(blob));
+                    g5.loadGraph(graph,db,graph.title);
+                });
+            };
+
             $scope.sharedViews = [];
             $scope.getSharedViews = function()
             {
-                console.log('getSharedViews called');
                 $http.get('/shareWithMe').success(function(response) {
-                    console.log(response);
                     $scope.sharedViews=response;
                 }).error(function(response) {
                     $scope.error = response.message;
                 });
             };
+            $scope.deleteView = function(index)
+            {
+                var modalInstance = $modal.open({
+                    templateUrl: './partials/deleteViewOpen.html',
+                    controller: modalCtrlProvider.getCtrl("deleteViewCtrl"),
+                    resolve: {
+                        view: function() {
+                        return $scope.myViews[index];
+                    }}
+                });
+                modalInstance.result.then(function(proceed) {
+                    if(proceed)
+                    {
+                        var rView = $scope.myViews[index];
+                        var send =
+                        {
+                            id: rView._id
+                        };
+                        $http.post('/deleteView', send).success(function(response) {
+                            $scope.myViews.splice(index,1);
+                        }).error(function(response) {
+                            $scope.error = response.message;
+                        });
+                        $http.post('/removeFromWorkspace', {viewId: $scope.myViews[index]._id}).success(function(response) {
+                             $scope.workspaceViewIds = response;
+
+                        }).error(function(response) {
+                            $scope.error = response.message;
+                        });
+                        var i = 0;
+                        for(i; i<$scope.views.length; i++)
+                        {
+                            if($scope.views[i]._id==rView._id)
+                            {
+                                break;
+                            }
+                        };
+                        $scope.removeView(i);
+                    }
+                }, function() {
+                    return;
+                });
+            };
+
+        /*
+        * Comments
+        */ 
+            $scope.getComments = function()
+            {
+                $http.post('/getComments', {_id:  $scope.views[$scope.active]._id }).success(function(response) {
+                    $scope.views[$scope.active].comments = response;
+                }).error(function(response) {
+                    $scope.error = response.message;
+                });
+            } 
+            $scope.newComment = {};
+            $scope.addComment = function()
+            {  if($scope.newComment.text.length==0 || $scope.newComment.text.length==undefined)
+                {
+                    console.log('Too short');
+                    return;
+                }
+                $scope.newComment._id = $scope.views[$scope.active]._id;
+                $http.post('/addComment', $scope.newComment).success(function(response) {
+                    $scope.getComments();
+                    $scope.newComment = {};
+                }).error(function(response) {
+                    $scope.error = response.message;
+                });
+            };
+            $scope.deleteComment = function(delComment)
+            {
+                var sent = 
+                {
+                    comment: delComment,
+                    view: $scope.views[$scope.active]._id
+                };
+                $http.post('/deleteComment', sent).success(function(response) {
+                    $scope.getComments();
+                }).error(function(response) {
+                    $scope.error = response.message;
+                });
+            };
+
+        /*
+        * Notes
+        */ 
+            $scope.noteTopics = [];
+            $scope.getNotes = function()
+            {   $scope.noteTopics = [];
+                $http.post('/getNotes', {_id:  $scope.views[$scope.active]._id }).success(function(response) {
+                    $scope.views[$scope.active].notes = response;
+                    $scope.views[$scope.active].notes.forEach(function(note){
+                        if($scope.noteTopics.indexOf(note.topic)<0)
+                        {
+                            $scope.noteTopics.push(note.topic);
+                        }
+                    });
+                    console.log('TOPICS:')
+                    console.log($scope.noteTopics);
+                }).error(function(response) {
+                    $scope.error = response.message;
+                });
+
+            } 
+            $scope.newNote = {};
+            $scope.addNote = function()
+            {  if($scope.newNote.text.length==0 || $scope.newNote.text.length==undefined || $scope.newNote.title.length==0 || $scope.newNote.title.length==undefined || $scope.newNote.topic.length==0 || $scope.newNote.topic.length==undefined)
+                {
+                    console.log('Too short');
+                    return;
+                }
+                $scope.newNote._id = $scope.views[$scope.active]._id;
+                $http.post('/addNote', $scope.newNote).success(function(response) {
+                    $scope.getNotes();
+                    $scope.newNote = {};
+                }).error(function(response) {
+                    $scope.error = response.message;
+                });
+            };
+            $scope.deleteNote = function(delNote)
+            {
+                var sent = 
+                {
+                    note: delNote,
+                    view: $scope.views[$scope.active]._id
+                };
+                $http.post('/deleteNote', sent).success(function(response) {
+                    $scope.getNotes();
+                }).error(function(response) {
+                    $scope.error = response.message;
+                });
+            };        
         /*
         * Nav and Right-Panel Javascript
         */
@@ -427,7 +724,6 @@ angular.module("MyApp")
            };
             $.asm = {};
             $.asm.panels = 1;
-
             function rightpanel(panels) {
                 $.asm.panels = panels;
                 if (panels === 1) {
@@ -442,15 +738,14 @@ angular.module("MyApp")
                 //            $('#rightpanel').height($(window).height() - 50);   
                 }
             };
-
             $('#toggleRightpanel').click(function() {
               if ($.asm.panels === 1) {
-                $('#toggleRightpanel i').addClass('glyphicon-option-vertical');
-                $('#toggleRightpanel i').removeClass('glyphicon-option-vertical');
-                return rightpanel(2);
+                $scope.toggleArrow=false;
+                $scope.$apply();
+                return rightpanel(2);   
               } else {
-                $('#toggleRightpanel i').removeClass('glyphicon-option-vertical');
-                $('#toggleRightpanel i').addClass('glyphicon-option-vertical');
+                $scope.toggleArrow=true;
+                $scope.$apply();
                 return rightpanel(1);
               }
             });

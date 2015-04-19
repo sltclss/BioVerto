@@ -7,9 +7,12 @@ angular.module("MyApp")
                     index: "=",
                     layout: "=",
                     heading: "=",
+                    title: "=",
                     activeindex: "=",
                     graphName: "=",
                     state:"=",
+                    savable:"=",
+                    sharable:"=",
                     rootfn:"&"
                    
                 },
@@ -38,7 +41,7 @@ angular.module("MyApp")
 
                     scope.removeView = function()
                     {
-                        scope.view.destroy();
+                       // scope.view.destroy();
                         scope.rootfn({fntype:"removeView",args:scope.index});  
                     }
 
@@ -93,6 +96,12 @@ angular.module("MyApp")
                            return {layout:scope.layout,graphName:scope.graphName,config:config,edgefilters:scope.filters.edge,nodefilters:scope.filters.node,viewState:scope.view.getState()}
                     }
 
+                    scope.testView = function()
+                    {
+                        console.log('TESTFUNCTION');
+                        console.log(scope.savable);
+                        console.log(scope.sharable);
+                    };
                     scope.resumeState = function()
                     {
                         var state = scope.state;
@@ -173,7 +182,11 @@ angular.module("MyApp")
                         {
                             scope.graphName = graphName;
                         }
-                        scope.heading = scope.graphName;
+                        scope.heading = scope.title;
+                        if(scope.heading == undefined)
+                        {
+                            scope.heading = scope.graphName;
+                        }
                         scope.graph = g5.getGraph(scope.graphName);
                         scope.view = viewProvider.getView(scope.layout);
                         scope.view.init("#graphNumber" + scope.index, scope.graph, scope.width, scope.height,undefined,modalfn);
