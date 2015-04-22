@@ -37,8 +37,8 @@
                     </button>
                 </div>
                 <div class="col-sm-8 text-right" style="padding-right: 0px">
-                    <button type="button" class="btn btn-xs btn-danger" style="padding: 2px 4px 5px 4px" ng-click="deleteView($index)"><span class="glyphicon glyphicon-trash"></span></button>
-                    <button type="button" class="btn btn-xs btn-primary" style="padding: 2px 4px 5px 4px"><span class="glyphicon glyphicon-share" ng-click="shareView('my-views', $index)"></span></button><br>
+                    <button type="button" class="btn btn-xs btn-danger" style="padding: 2px 4px 5px 4px" ng-click="deleteView(view)"><span class="glyphicon glyphicon-trash"></span></button>
+                    <button type="button" class="btn btn-xs btn-primary" style="padding: 2px 4px 5px 4px"><span class="glyphicon glyphicon-share" ng-click="shareView('my-views', view)"></span></button><br>
                     <h5><small>{{view.createdOn | date:'medium'}}</small></h5>
                     
                 </div>

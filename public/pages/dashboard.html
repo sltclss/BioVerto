@@ -1,4 +1,4 @@
-<section data-ng-controller="mainController" data-ng-init="initViewGraphs()">
+<section data-ng-controller="mainController" data-ng-init="initViewGraphs();">
   <div class="navbar navbar-fixed-top navbar-inverse" style="margin-bottom: 0px !important; padding-bottom: 0px" role="navigation" data-ng-controller="AuthenticationController">
             <div class="container">
                 <div class="navbar-header">
@@ -214,7 +214,7 @@
                 <a href="" class="list-group-item text-center" ng-click="open = 2; ">
                   <h4 class="glyphicon glyphicon-eye-open"></h4><br/>My Views
                 </a>
-                <a href="" class="list-group-item text-center" ng-click="open = 3">
+                <a href="" class="list-group-item text-center" ng-click="open = 3; updateSharedViews()">
                   <h4 class="glyphicon glyphicon-share"></h4><br/>Shared
                 </a>
                 
@@ -266,28 +266,82 @@
                 </h2>
             </div>
             <div  ng-repeat=" view in views |sortViews:active" style="position:absolute" ng-show="views.length>0">
-                <panel activeindex=active layout = view.layout index =view.indx heading=view.title title=view.title state=view.state graph-name=view.graphName savable="views[active].createdBy==authentication.user._id || views[active]._id==undefined" sharable="views[active]._id!=undefined || views[active].createdBy==authentication.user._id" rootfn= "panelFn(fntype,args)" href="#"></panel>
+                <panel activeindex=active layout=view.layout index=view.indx heading=view.title title=view.title state=view.state graph-name=view.graphName savable="view.createdBy==authentication.user._id || view._id==undefined" sharable="view._id!=undefined && view.createdBy==authentication.user._id" rootfn= "panelFn(fntype,args)" href="#"></panel>
             </div>
         </div>
 
-      <div id="rightpanel" >
+      <div id="rightpanel" data-ng-show="views.length>0">
       <!--Rightpanel content-->
         <div id="rightpanel-content">
           <ul class="nav nav-pills" ng-init="activityTab=0" style="padding-bottom: 10px">
-            <li ng-class="{ active: activityTab==0}"><a href="" ng-click="activityTab=0">Graph Info</a></li>
+            <li ng-class="{ active: activityTab==0}"><a href="" ng-click="activityTab=0">General Info</a></li>
             <li ng-class="{ active: activityTab==1}"><a href="" ng-click="activityTab=1; getNotes()">Notes</a></li>
             <li ng-class="{ active: activityTab==2}"><a href=""ng-click="activityTab=2; getComments()">Comments</a></li>
           </ul>
 
           <div ng-show="activityTab==0">
+            <h5 style="color: #428bca">View Info:</h5>
+            <table class="table" style="table-layout: fixed;">
+              <tbody>
+                  <tr>
+                      <th class="col-sm-6">View Name</th>
+                      <td>{{views[active].title}}</td>
+                  </tr>
+                  <tr>
+                      <th class="col-sm-6">Graph Layout</th>
+                      <td>{{views[active].layout}}</td>
+                  </tr>
+                  <tr>
+                      <th class="col-sm-6">Created By</th>
+                      <td>{{views[active].createdByUsername}}</td>
+                  </tr>
+                  <tr>
+                      <th class="col-sm-6">Created On</th>
+                      <td>{{views[active].createdOn | date:'medium'}}</td>
+                  </tr>
+                  <tr>
+                      <th class="col-sm-6">Shared With</th>
+                      <td style="word-wrap:break-word"><span data-ng-repeat="user in views[active].shareUsers">{{user}}&nbsp;&nbsp;</span></td>
+                  </tr>
+              </tbody>
+            </table>
+            <h5 style="color: #428bca">Graph Info:</h5>                  
+            <table class="table">
+              <tbody>
+                  <tr>
+                      <th class="col-sm-6">Graph Name</th>
+                      <td>{{selectedGraph.title}}</td>
+                  </tr>
+                  <tr>
+                      <th class="col-sm-6">Created By</th>
+                      <td>{{selectedGraph.createdBy}}</td>
+                  </tr>
+                  <tr>
+                      <th class="col-sm-6">Created On</th>
+                      <td>{{selectedGraph.createdOn | date:'medium'}}</td>
+                  </tr>
+                  <tr>
+                      <th class="col-sm-6">DB Group</th>
+                      <td>{{selectedGraph.dbGroup}}</td>
+                  </tr>
+                  <tr>
+                      <th class="col-sm-6">Number of Edges</th>
+                      <td>{{selectedGraph.numEdges}}</td>
+                  </tr>
+                  <tr>
+                      <th class="col-sm-6">Number of Nodes</th>
+                      <td>{{selectedGraph.numNodes}}</td>
+                  </tr>
+              </tbody>
+            </table>
           </div>
           <div ng-show="activityTab==1">
-            <div id="note-subject-header" class="col-sm-12">
+            <div id="note-subject-header" class="col-sm-12"  data-ng-if="views[active]._id!=undefined">
               <div class="col-sm-3">
                 <h5>Topic:</h5>
               </div>
               <div class="col-sm-9">
-                <select class="form-control input-sm" data-ng-init="showTopic=''" data-ng-model="showTopic">
+                <select class="form-control input-sm" data-ng-init="showTopic.text=''" data-ng-model="showTopic.text">
                         <option value="">All</option>
                         <option ng-repeat="topic in noteTopics" ng-value="topic">{{topic}}</option>
                 </select>
@@ -295,14 +349,17 @@
             </div>
             <!--height adjustment after disable add note-->
             <div ng-class="views[active].createdBy==authentication.user._id ? 'rightpanel-note-main' : 'rightpanel-note-main2'">
-              <div data-ng-if="views[active].notes.length==0" class="text-center" style="padding-top: 40px">
+              <div data-ng-if="views[active].notes.length==0 && views[active]._id!=undefined" class="text-center" style="padding-top: 40px">
                 This View does not have any notes.
               </div>
-              <div class="note" data-ng-repeat = "note in views[active].notes | orderBy: '-created' | filter:{topic: showTopic} ">
+              <div data-ng-if="views[active]._id==undefined" class="text-center" style="padding-top: 40px">
+                Save this View to add notes.
+              </div>
+              <div class="note" data-ng-repeat = "note in views[active].notes | orderBy: '-created' | filter:{topic: showTopic.text} " data-ng-if="views[active]._id!=undefined">
                 <span class="glyphicon glyphicon-pushpin" style="color: #555"></span>
                 <span style="color: #555; padding: 0 5px; font-weight: bold">{{note.title}}</span>
                 <span  style="color: #777" ><small class="label label-default">{{note.topic}}</small></span>
-                <span  style="color: #777"><small><span class=" glyphicon glyphicon-trash btn btn-sm pull-right" data-ng-click="deleteNote(note)"></span></small></span>
+                <span  style="color: #777"><small><span class=" glyphicon glyphicon-trash btn btn-sm pull-right" ng-if="note.user == authentication.user.username" data-ng-click="deleteNote(note)"></span></small></span>
                 <div class="note-content">
                   {{note.text}}
                 </div>
@@ -328,10 +385,13 @@
 
           <div ng-show="activityTab==2">
             <div class="rightpanel-comment-main">
-              <div data-ng-if="views[active].comments.length==0" class="text-center" style="padding-top: 40px">
+              <div data-ng-if="views[active].comments.length==0 && views[active]._id!=undefined" class="text-center" style="padding-top: 40px">
                 This View does not have any comments.
               </div>
-              <div class="comment" data-ng-repeat = "comment in views[active].comments | orderBy: '-created'">
+              <div data-ng-if="views[active]._id==undefined" class="text-center" style="padding-top: 40px">
+                Save this View to add comments.
+              </div>
+              <div class="comment" data-ng-repeat = "comment in views[active].comments | orderBy: '-created'" data-ng-if="views[active]._id!=undefined">
                 <span class="glyphicon glyphicon-comment" style="color: #555"></span>
                 <span style="color: #555; padding-left: 5px; font-weight: bold">{{comment.user}}</span>
                 <span  style="color: #777">&bullet; <small>  {{comment.created | timeago}}<span class=" glyphicon glyphicon-trash btn btn-sm pull-right" ng-if="comment.user == authentication.user.username" data-ng-click="deleteComment(comment)"></span></small></span>
@@ -340,14 +400,14 @@
                 </div>
               </div>
             </div>
-            <div id="new-comment">
+            <div id="new-comment" data-ng-if="views[active]._id!=undefined">
               <h5 style="color: #428bca">New Comment:</h5>
               <textarea class="form-control" rows="2" style="width: 100%; resize: none; margin: 10px 0" data-ng-model="newComment.text"></textarea>
               <button type="button" class="btn btn-default btn-sm pull-right" ng-click="addComment()">Submit</button>
             </div>
           </div>
         </div>
-        <div id="toggleRightpanel" class="toggles" data-ng-init="toggleArrow.test=true" style=" cursor: pointer; cursor: hand;">
+        <div id="toggleRightpanel" class="toggles" data-ng-init="toggleArrow.test=true" style=" cursor: pointer; cursor: hand;" data-ng-click="updateSelectedGraph()">
          <span style="font-size: 24px; margin: 9px 12px" data-ng-if="toggleArrow">&lsaquo;&lsaquo;</span>
          <span style="font-size: 24px; margin: 9px 12px" data-ng-if="!toggleArrow">&rsaquo;&rsaquo;</span>
 
@@ -364,7 +424,6 @@
         <div ng-show="open==2"><div data-ng-include="'./pages/dashboard-my-views.html'"></div></div>
         <div ng-show="open==3"><div data-ng-include="'./pages/dashboard-shared-views.html'"></div></div>
 
-          
      <!--     <div ng-show="uploadType=='fromDB'">
             <input type="file" name='files[]' ng-model="fileName" onchange="angular.element(this).scope().handleFileSelect(this)"/>
             <br>

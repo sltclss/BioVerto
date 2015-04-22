@@ -65,7 +65,8 @@ g5.addIOPlugin = function(name, inputFct, outputFct) {
 // function to create graph 
 g5.createGraph = function(name,graphObj,db) {
     if (g5.graphs[name] !== undefined) {
-        codingError("A graph with the name " + name + " is already present. Ignoring");
+      /*
+          codingError("A graph with the name " + name + " is already present. Ignoring");
         if (confirm("A graph with same name exits. Do you want to overwrite the existing graph"))
         {
              delete g5.graphs[name];
@@ -75,8 +76,9 @@ g5.createGraph = function(name,graphObj,db) {
         {
             return;
         }
-        // delete g5.graphs[name];
-
+        delete g5.graphs[name];
+    */
+     delete g5.graphs[name];
     }
 
     g5.graphs[name] = new Graph(graphObj,db)

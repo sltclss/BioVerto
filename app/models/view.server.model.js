@@ -19,6 +19,10 @@ var ViewSchema = new Schema({
         ref: 'User',
         required: 'You must be logged in to create/save a view.',
     },
+    createdByUsername:{
+        type: String,
+     //   required: 'You must be logged in to create/save a view.',
+    },
     graphName: {
         type: String,
         default: '',

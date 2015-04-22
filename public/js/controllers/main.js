@@ -10,6 +10,7 @@ angular.module("MyApp")
             $scope.graphList = [];
             $scope.logged = false;
             $scope.username = null;
+            $scope.selectedGrah = {};
 
             $scope.authentication = Authentication;
            
@@ -17,7 +18,7 @@ angular.module("MyApp")
               return Math.random();
             };
 
-            $scope.addView = function(layout, graphName, state, title, id, comments, notes, createdBy)
+            $scope.addView = function(layout, graphName, state, title, other)
             {   
                 if ($scope.newViewIndex !== 0 && typeof graphName === 'undefined')
                 {
@@ -29,9 +30,26 @@ angular.module("MyApp")
                 {
                     nTitle = title;
                 }
-
+                if(other==undefined)
+                {
+                    other = {};
+                }
                 $scope.active = $scope.newViewIndex;
-                $scope.views[$scope.newViewIndex] = {layout: layout, title: nTitle, graphName: graphName, indx: $scope.newViewIndex, state: state, _id: id, comments: comments, notes: notes, createdBy: createdBy};
+                $scope.views[$scope.newViewIndex] = 
+                {
+                    layout: layout, 
+                    title: nTitle, 
+                    graphName: graphName, 
+                    indx: $scope.newViewIndex, 
+                    state: state, 
+                    _id: other._id, 
+                    comments: other.comments, 
+                    notes: other.notes, 
+                    createdOn: other.createdOn,
+                    createdBy: other.createdBy, 
+                    createdByUsername: other.createdByUsername,
+                    shareUsers: other.shareUsers
+                };
 
                 $scope.newViewIndex++;
             };
@@ -109,8 +127,10 @@ angular.module("MyApp")
             $scope.changeView = function(indx)
             {
                 $scope.active = parseInt(indx);
+                $scope.updateSelectedGraph();
                 //update note topics
                 $scope.getNotes();
+
 
             };
             $scope.cloneView = function(state)
@@ -279,14 +299,20 @@ angular.module("MyApp")
 
 
 //SLT
-            $scope.loginContact = function()
+            $scope.loginContact = function(number)
             {
+                if($scope.authentication.user!=undefined && number<2)
+                {
+                    return;
+                }
                 var modalInstance = $modal.open({
                     templateUrl: './partials/loginContactModal.html',
                     controller: modalCtrlProvider.getCtrl("loginContact"),
                     windowClass: 'login-modal',
                     resolve: {
-                        tabIndex: 1
+                        tabNum: function() {
+                            return number;   
+                        }
                     },
                 });
                 modalInstance.result.then(function() {
@@ -295,7 +321,8 @@ angular.module("MyApp")
                     return;
                 });
             };
-            $scope.shareView = function(callFrom, index)
+
+            $scope.shareView = function(callFrom, view)
             {
                 var modalInstance = $modal.open({
                     templateUrl: './partials/shareViewOpen.html',
@@ -304,15 +331,27 @@ angular.module("MyApp")
                         view: function() {
                             if(callFrom=='my-views')
                             {
-                                return $scope.myViews[index];
+                                return view;
                             }
                             return $scope.views[$scope.active];
                         }}
                 });
                  modalInstance.result.then(function(response) {
-                    if(response.isChanged)
+                    if(response.isChanged && callFrom=='my-views')
                     {
-                        $scope.myViews[index].shareUsers=response.updatedList;
+                        view.shareUsers=response.updatedList;
+                        for(var i = 0; i<$scope.views.length; i++)
+                        {
+                            if($scope.views[i]._id==view._id)
+                            {
+                                $scope.views[i].shareUsers = response.updatedList;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        $scope.views[$scope.active].shareUsers=response.updatedList;
                     }
                 }, function() {
                     return;
@@ -382,7 +421,17 @@ angular.module("MyApp")
                 }
                     var state = selectedView.state;
                     console.log(selectedView);
-                    $scope.addView(state.layout, state.graphName, state, selectedView.title, selectedView._id, selectedView.comments, selectedView.notes, selectedView.createdBy);
+                    var other =
+                    {
+                        _id: selectedView._id, 
+                        comments: selectedView.comments, 
+                        notes: selectedView.notes, 
+                        createdBy: selectedView.createdBy,
+                        createdOn: selectedView.createdOn,
+                        createdByUsername: selectedView.createdByUsername,
+                        shareUsers: selectedView.shareUsers
+                    };
+                    $scope.addView(state.layout, state.graphName, state, selectedView.title, other);
 
                     selectedView.inWorkspace=true;
                     $http.post('/addtoWorkspace', {viewId: selectedView._id}).success(function(response) {
@@ -405,7 +454,6 @@ angular.module("MyApp")
                         });
                     }
                 }
-                console.log('THROUGHSHARED');
                 for(var i = 0; i< $scope.sharedViews.length; i++)
                 {
                     console.log($scope.sharedViews[i]._id);
@@ -438,7 +486,17 @@ angular.module("MyApp")
                             if($scope.myViews[i]._id == viewId )
                             {
                                var state = $scope.myViews[i].state;
-                                $scope.addView(state.layout, state.graphName, state, $scope.myViews[i].title, $scope.myViews[i]._id, $scope.myViews[i].comments, $scope.myViews[i].notes, $scope.myViews[i].createdBy);
+                               var other =
+                                {
+                                    _id: $scope.myViews[i]._id, 
+                                    comments: $scope.myViews[i].comments, 
+                                    notes: $scope.myViews[i].notes, 
+                                    createdBy: $scope.myViews[i].createdBy,
+                                    createdOn: $scope.myViews[i].createdOn,
+                                    createdByUsername: $scope.myViews[i].createdByUsername,
+                                    shareUsers: $scope.myViews[i].shareUsers
+                                };
+                                $scope.addView(state.layout, state.graphName, state, $scope.myViews[i].title, other);
 
                                 $scope.myViews[i].inWorkspace=true;
                                 return;
@@ -449,7 +507,17 @@ angular.module("MyApp")
                             if($scope.sharedViews[i]._id == viewId )
                             {                        
                                 var state = $scope.sharedViews[i].state;
-                                $scope.addView(state.layout, state.graphName, state, $scope.sharedViews[i].title,  $scope.sharedViews[i]._id, $scope.sharedViews[i].comments, $scope.sharedViews[i].notes, $scope.sharedViews[i].createdBy);
+                                var other =
+                                {
+                                    _id: $scope.sharedViews[i]._id, 
+                                    comments: $scope.sharedViews[i].comments, 
+                                    notes: $scope.sharedViews[i].notes, 
+                                    createdBy: $scope.sharedViews[i].createdBy,
+                                    createdOn: $scope.sharedViews[i].createdOn,
+                                    createdByUsername: $scope.sharedViews[i].createdByUsername,
+                                    shareUsers: $scope.sharedViews[i].shareUsers
+                                };
+                                $scope.addView(state.layout, state.graphName, state, $scope.sharedViews[i].title,  other);
 
                                 $scope.sharedViews[i].inWorkspace=true;
                                 return;
@@ -472,6 +540,17 @@ angular.module("MyApp")
                     $scope.error = response.message;
                 });
             };
+            $scope.updateSelectedGraph = function()
+            {
+                for(var i = 0; i<$scope.userGraphs.length; i ++)
+                {
+                    if($scope.userGraphs[i].title==$scope.views[$scope.active].graphName)
+                    {
+                        $scope.selectedGraph = $scope.userGraphs[i];
+                        break;
+                    }
+                }
+            };
             $scope.initViewGraphs = function()
             {   
                 $http.get('/listByUser').success(function(response) {
@@ -485,7 +564,6 @@ angular.module("MyApp")
                     }
                     $http.get('/shareWithMe').success(function(response1) {
                         $scope.sharedViews=response1;
-                        console.log('Sharedwithme');
                         for(var i = 0; i<$scope.sharedViews.length; i++)
                         {                       
                             if($scope.userGraphNames.indexOf($scope.sharedViews[i].graphName)<0)
@@ -494,7 +572,7 @@ angular.module("MyApp")
                             }
                         }
                         if($scope.userGraphNames.length>0)
-                        {                             console.log($scope.userGraphNames);
+                        {                            
 
                             $scope.retrieveGraphs($scope.userGraphNames);
                         }
@@ -506,9 +584,10 @@ angular.module("MyApp")
                 });
 
                     //after initialize setup workspace; time out for asynchronous calls
-                     $timeout($scope.setupWorkspace, 1000);
+                     $timeout($scope.setupWorkspace, 900);
 
             };
+
             $scope.retrieveGraphs = function(graphNames)
             {   
                 var send = {userGraphs: graphNames};
@@ -539,36 +618,70 @@ angular.module("MyApp")
             {
                 $http.get('/shareWithMe').success(function(response) {
                     $scope.sharedViews=response;
+
                 }).error(function(response) {
                     $scope.error = response.message;
                 });
             };
-            $scope.deleteView = function(index)
+
+            $scope.updateSharedViews = function()
+            {
+                $http.get('/shareWithMe').success(function(response) {
+                    response.forEach(function (view)
+                    {
+                        var exists  = false;
+                        for(var i = 0; i<$scope.sharedViews.length; i++)
+                        {
+                            if(view._id ==$scope.sharedViews[i]._id)
+                            {
+                                exists = true;
+                                break;
+                            }
+                        }
+                        if(!exists)
+                        {console.log(view.graphName);
+  
+                                $scope.retrieveGraphs([view.graphName]);
+
+                            $scope.sharedViews.push(view);
+                        }
+                    });
+                }).error(function(response) {
+                    $scope.error = response.message;
+                });
+            };
+            $scope.showTopic={};
+            $scope.deleteView = function(view)
             {
                 var modalInstance = $modal.open({
                     templateUrl: './partials/deleteViewOpen.html',
                     controller: modalCtrlProvider.getCtrl("deleteViewCtrl"),
                     resolve: {
                         view: function() {
-                        return $scope.myViews[index];
+                        return view;
                     }}
                 });
                 modalInstance.result.then(function(proceed) {
                     if(proceed)
                     {
-                        var rView = $scope.myViews[index];
+                        var rView = view;
                         var send =
                         {
                             id: rView._id
                         };
                         $http.post('/deleteView', send).success(function(response) {
-                            $scope.myViews.splice(index,1);
+                            var j = 0;
+                            for(j; j<$scope.myViews.length;j++)
+                            {
+                                if($scope.myViews[j]._id==view._id)
+                                break;
+                            }
+                            $scope.myViews.splice(j,1);
                         }).error(function(response) {
                             $scope.error = response.message;
                         });
-                        $http.post('/removeFromWorkspace', {viewId: $scope.myViews[index]._id}).success(function(response) {
+                        $http.post('/removeFromWorkspace', {viewId: view._id}).success(function(response) {
                              $scope.workspaceViewIds = response;
-
                         }).error(function(response) {
                             $scope.error = response.message;
                         });

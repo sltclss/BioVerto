@@ -16,7 +16,7 @@ var mongoose = require('mongoose'),
 exports.create = function(req, res) {
 	var view = new View(req.body);
 	view.createdBy = req.user._id;
-	console.log(req.body);
+	view.createdByUsername = req.user.username;
 	view.state = req.body.state;
 	view.save(function(err) {
 		if (err) {
@@ -407,22 +407,7 @@ exports.getSharedWithUser = function(req, res) {
 			});
 		} else 
 		{
-			foundViews.forEach(function(view){
-				User.findOne({_id: view.createdBy}).sort('-created').exec(function(err, foundUser){
-					if (err) 
-					{
-						return res.status(400).send({
-							message: errorHandler.getErrorMessage(err)
-						});
-					} else 
-					{
-						view.createdUserName = foundUser.username;
-					}
-				});
-			});
-
 			res.jsonp(foundViews);
-
 			
 		}
 	}); 
@@ -433,13 +418,14 @@ exports.getSharedWithUser = function(req, res) {
  * Share a view
  */
 exports.shareView = function(req, res) {
-	if(!req.user || !req.body.view)
+	if(!req.user || !req.body._id)
 	{
 		return res.send({
 			message: 'Missing data; request incomplete'
 		});
 	}
-	View.findOne({createdBy: req.user._id, title: req.body.view}).sort('-created').exec(function(err, foundView){
+	
+	View.findOne({createdBy: req.user._id, _id: req.body._id}).sort('-created').exec(function(err, foundView){
 		if (err) 
 		{
 			return res.status(400).send({
@@ -454,6 +440,7 @@ exports.shareView = function(req, res) {
 						message: errorHandler.getErrorMessage(err)
 					});
 				} else {
+					console.log(foundView.shareUsers);
 					res.jsonp(foundView.shareUsers);
 				}
 			});

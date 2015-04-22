@@ -57,7 +57,7 @@
     $scope.share = function(){
         var send =
         {
-            view: $scope.view.title,
+            _id: $scope.view._id,
             receivers: $scope.sharingList
         };
         $http.post('/shareView', send).success(function(response) {

@@ -1,12 +1,12 @@
 
-    <div class = "user-login col-sm-12" style="float: none; margin-left: auto; margin-right: auto">
+    <div class = "user-login col-sm-12" style="float: none; margin-left: auto; margin-right: auto" data-ng-init="setup()">
         <ul class="nav nav-tabs">
-          <li role="presentation" ng-class="{ 'active': tab1==true }"><a href="" ng-click="tab1 = true; tab2 = false; tab3 = false"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;Create Account</a></li>
-          <li role="presentation" ng-class="{ 'active': tab2==true }"><a href="" ng-click="tab1 = false; tab2 = true; tab3 = false"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;User Login</a></li>
-          <li role="presentation" ng-class="{ 'active': tab3==true } "><a href="" ng-click="tab1 = false; tab2 = false; tab3 = true"><span class="glyphicon glyphicon-send"></span>&nbsp;&nbsp;Contact Us</a></li>
+          <li role="presentation" ng-class="{ 'active': tab.num==0 }"><a href="" ng-click="tab.num=0"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;Create Account</a></li>
+          <li role="presentation" ng-class="{ 'active': tab.num==1 }"><a href="" ng-click="tab.num=1"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;User Login</a></li>
+          <li role="presentation" ng-class="{ 'active': tab.num==2 } "><a href="" ng-click="tab.num=2"><span class="glyphicon glyphicon-send"></span>&nbsp;&nbsp;Contact Us</a></li>
         </ul>
-        <div class="tab-content" ng-init="tab1 = true; tab2 = false; tab3 = false">
-            <div id="create-account" ng-show="tab1" data-ng-controller="AuthenticationController">
+        <div class="tab-content" >
+            <div id="create-account" ng-show="tab.num==0" data-ng-controller="AuthenticationController">
                 <h4>Create New Account</h4><hr style="margin-top: 0px; border-color: #ddd">
                 <form name="userForm" data-ng-submit="signup()" class="signin" novalidate autocomplete="off">
                     <fieldset>
@@ -50,7 +50,7 @@
                     </fieldset>
                 </form>
             </div>
-            <div id="login" ng-show="tab2" data-ng-controller="AuthenticationController">
+            <div id="login" ng-show="tab.num==1" data-ng-controller="AuthenticationController">
                 <h4>User Login</h4><hr style="margin-top: 0px; border-color: #ddd">
                 <form data-ng-submit="signin()" class="signin" autocomplete="off">
                     <fieldset>
@@ -75,7 +75,7 @@
                     </fieldset>
                 </form>
             </div>
-            <div id="contact-us" ng-show="tab3">
+            <div id="contact-us" ng-show="tab.num==2">
                 <div class="col-sm-12">
                     <h4>Personnel</h4><hr style="margin-top: 0px; border-color: #ddd;">
 

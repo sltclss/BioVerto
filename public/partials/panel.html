@@ -31,11 +31,7 @@
                                 <form>
                                  <h6>Export as Image</h6>
                                 <h6>Filename:</h6> 
-                                <input type="text" ng-model=scope.saveView = function()
-                    {
-                         scope.rootfn({fntype:"saveView",args:scope.getState()});
-                        
-                    }"filename">
+                                <input type="text" ng-model="filename">
                               
                                 <a href="{{imageData}}" ng-hide="!filename" style="color: #FFFFFF;background: #428bca;border-radius: 2;padding: 5;" download="{{filename}}.png" >Save</a>                               
                                 
@@ -58,7 +54,6 @@
 
             <div class="panel-body" style="padding: 1px;">
                 <div id="graphNumber{{index}}"></div>
-            </div>
         </div>
 
     </div>
@@ -83,7 +78,6 @@
                  <filterselect acessorfns="acessorFns" type="'Edge'" filterupdate ="view.edgeFilterFunction(_)" filtervalue = "filters.edge"  ></filterselect>
              </tab>
             </tabset>
-            <button ng-click="testView()">test </button>
         </div>
     </div>
 </div>

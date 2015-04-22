@@ -99,8 +99,7 @@ angular.module("MyApp")
                     scope.testView = function()
                     {
                         console.log('TESTFUNCTION');
-                        console.log(scope.savable);
-                        console.log(scope.sharable);
+                        console.log(scope.state);
                     };
                     scope.resumeState = function()
                     {
