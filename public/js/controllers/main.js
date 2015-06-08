@@ -1,3 +1,13 @@
+/*
+ *
+ * Kartik Chivukula <https://github.com/kartikgc/>
+ * Sarah Talty <sltalty@ufl.edu>
+ *
+ * University of Florida
+ *
+*/
+
+
 angular.module("MyApp")
         .controller('mainController', function($scope, $rootScope ,$modal, modalCtrlProvider, $http, $compile, Authentication, $timeout) {
             $scope.views =[];
@@ -499,7 +509,7 @@ angular.module("MyApp")
                                 $scope.addView(state.layout, state.graphName, state, $scope.myViews[i].title, other);
 
                                 $scope.myViews[i].inWorkspace=true;
-                                return;
+                                break;
                             }
                         }
                         for(var i = 0; i< $scope.sharedViews.length; i++)
@@ -520,7 +530,7 @@ angular.module("MyApp")
                                 $scope.addView(state.layout, state.graphName, state, $scope.sharedViews[i].title,  other);
 
                                 $scope.sharedViews[i].inWorkspace=true;
-                                return;
+                                break;
                             }
                         }        
                     });

@@ -1,4 +1,14 @@
-
+ /*
+ *
+ * Sarah Talty <sltalty@ufl.edu>
+ *
+ * Based on earlier code:
+ * Kartik Chivukula <https://github.com/kartikgc/>
+ *
+ * University of Florida
+ *
+ */
+ 
 angular.module("MyApp")
         .controller('AuthenticationController', ['$scope', '$http', '$location', 'Authentication', '$cookieStore',
 	function($scope, $http, $location, Authentication,$cookieStore) {
