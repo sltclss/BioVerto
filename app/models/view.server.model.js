@@ -1,5 +1,15 @@
 'use strict';
-
+ /*
+ *
+ * Sarah Talty <sltalty@ufl.edu>
+ *
+ * Based on earlier code:
+ * Kartik Chivukula <https://github.com/kartikgc/>
+ *
+ * University of Florida
+ *
+ */
+ 
 /**
  * Module dependencies.
  */
